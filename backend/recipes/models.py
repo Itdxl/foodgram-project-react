@@ -66,13 +66,13 @@ class Recipe(models.Model):
     )
     ingredients = models.ManyToManyField(
         Ingredient,
-        through='IngredientInResipe',
+        through='IngredientInRecipe',
         verbose_name='Ингредиенты в рецепте',
         related_name="recipes"
     )
     tags = models.ManyToManyField(
         Tag,
-        through='TagsInRecipe',
+        # through='TagsInRecipe',
         verbose_name='Теги для рецепта',
         related_name="recipes"
     )
@@ -94,3 +94,22 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class IngredientInRecipe(models.Model):
+    amount = models.PositiveIntegerField(verbose_name='Количество ингредиента')
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        verbose_name='Рецепт'
+    )
+    ingredient = models.ForeignKey(
+        Ingredient,
+        on_delete=models.CASCADE,
+        related_name='ingredientinrecipe',
+        verbose_name='Ингредиент в рецепте'
+    )
+
+    class Meta:
+        verbose_name = 'Количество ингредиента'
+        # verbose_name_plural = 'Количество ингредиентов'
