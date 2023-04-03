@@ -68,18 +68,18 @@ class Recipe(models.Model):
         Ingredient,
         through='IngredientInRecipe',
         verbose_name='Ингредиенты в рецепте',
-        related_name="recipes"
+        # related_name="recipes"
     )
     tags = models.ManyToManyField(
         Tag,
         # through='TagsInRecipe',
         verbose_name='Теги для рецепта',
-        related_name="recipes"
+        # related_name="recipes"
     )
     cooking_time = models.PositiveIntegerField(
         verbose_name='Время приготовления',
         validators=[
-            MinValueValidator(1, 'Приготовление не меньше 1 минуты'),
+            MinValueValidator(1, 'Время не меньше 1 минуты.'),
         ],
     )
     pub_date = models.DateTimeField(
@@ -97,7 +97,12 @@ class Recipe(models.Model):
 
 
 class IngredientInRecipe(models.Model):
-    amount = models.PositiveIntegerField(verbose_name='Количество ингредиента')
+    amount = models.PositiveIntegerField(
+        verbose_name='Кол-во ингредиента',
+         validators=[
+            MinValueValidator(1, 'Кол-во не меньше 1'),
+        ],
+    )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
@@ -106,10 +111,48 @@ class IngredientInRecipe(models.Model):
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
-        related_name='ingredientinrecipe',
-        verbose_name='Ингредиент в рецепте'
+        verbose_name='Ингредиент'
     )
 
     class Meta:
         verbose_name = 'Количество ингредиента'
         # verbose_name_plural = 'Количество ингредиентов'
+
+
+class Favorite(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='favorite',
+        verbose_name='Пользователь'
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='in_favorite',
+        verbose_name='Рецепт'
+    )
+
+    class Meta:
+        ordering = ('-id',)
+        verbose_name = 'Избранное'
+
+
+class ShoppingCart(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='shopping_cart',
+        verbose_name='Пользователь'
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='shopping_cart',
+        verbose_name='Рецепт'
+    )
+
+    class Meta:
+        ordering = ('-id',)
+        verbose_name = 'Список покупок'
+        verbose_name_plural = 'Списки покупок'
