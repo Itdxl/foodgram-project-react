@@ -1,4 +1,5 @@
 from django.db.models import Sum
+from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
@@ -26,6 +27,7 @@ from .serializers import (
     FavoriteSerializer,
     ShoppingCartSerializer
     )
+from .pagination import CustomPageNumberPagination
 from .permissions import AuthorOrAdmin
 from .utils import download_file
 
@@ -38,21 +40,21 @@ class TagView(viewsets.ModelViewSet):
 
 class IngredientView(viewsets.ModelViewSet):
     queryset = Ingredient.objects.all()
-    permission_classes = [IsAuthenticatedOrReadOnly, ]
+    permission_classes = [IsAuthenticatedOrReadOnly,]
     serializer_class = IngredientSerializer
     search_fields = ['name', ]
     pagination_class = None
-    # filter_backends = [DjangoFilterBackend, ]
+    filter_backends = [DjangoFilterBackend,]
     # filter_class = IngredientFilter
 
 
 class RecipeView(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
-    # permission_classes = [IsAuthorOrAdmin]
-    # filter_backends = [DjangoFilterBackend]
+    permission_classes = [AuthorOrAdmin,]
+    filter_backends = [DjangoFilterBackend,]
     # filterset_class = RecipeFilter
-    # pagination_class = CustomPaginator
+    pagination_class = CustomPageNumberPagination
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
