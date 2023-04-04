@@ -9,11 +9,11 @@ defusedxml==0.7.1
 Django==3.2.9
 django-templated-mail==1.1.1
 django-filter==23.1
+drf-extra-fields==3.4.1
 djangorestframework==3.9.2
 djangorestframework-simplejwt==4.8.0
 djoser==2.1.0
 drf-base64==2.0
-drf-extra-fields==3.3.0
 idna==3.4
 importlib-metadata==1.7.0
 itypes==1.2.0

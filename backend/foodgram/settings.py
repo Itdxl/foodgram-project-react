@@ -138,27 +138,31 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.User'
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
-    ],
-    'DEFAULT_AUTHENTICATION_CLASSES': [
+    'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
-    ],
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ),
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ),
     'DEFAULT_PAGINATION_CLASS':
-        'recipes.pagination.CustomPageNumberPagination',
-    'PAGE_SIZE': 6
+        'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 6,
 }
 
 DJOSER = {
+    'LOGIN_FIELD': 'email',
+    'SERIALIZERS': {
+        'user_create': 'users.serializers.UserRegistrationSerializer',
+        'user': 'users.serializers.CustomUserSerializer',
+        'current_user': 'users.serializers.CustomUserSerializer',
+    },
+    'USER_ID_FIELD': 'id',
     'HIDE_USERS': False,
     'PERMISSIONS': {
-        'user_list': ['rest_framework.permissions.AllowAny'],
         'user': ['rest_framework.permissions.IsAuthenticated'],
+        'user_list': ['rest_framework.permissions.AllowAny']
     },
-    'SERIALIZERS': {
-        'current_user': 'users.serializers.UserSerializer',
-        'user_create': 'users.serializers.UserSerializer',
-        'user': 'users.serializers.UserSerializer',
-        'user_list': 'users.serializers.UserSerializer'
-    }
 }
