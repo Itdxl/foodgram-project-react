@@ -51,6 +51,10 @@ class RecipeIngredientsSerializer(serializers.ModelSerializer):
         slug_field='measurement_unit'
     )
 
+    class Meta:
+        model = IngredientInRecipe
+        fields = ('id', 'name', 'measurement_unit', 'amount')
+
 
 
 class RecipeAllSerializer(serializers.ModelSerializer):

@@ -9,6 +9,7 @@ from rest_framework.permissions import (
     IsAuthenticatedOrReadOnly,
 )
 from rest_framework.response import Response
+from .filters import IngredientsFilter, RecipeFilter
 from .models import (
     Ingredient,
     Tag,
@@ -45,15 +46,15 @@ class IngredientView(viewsets.ModelViewSet):
     search_fields = ['name', ]
     pagination_class = None
     filter_backends = [DjangoFilterBackend,]
-    # filter_class = IngredientFilter
+    filter_class = IngredientsFilter
 
 
 class RecipeView(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
-    permission_classes = [AuthorOrAdmin,]
+    permission_classes = [IsAuthenticatedOrReadOnly|AuthorOrAdmin]
     filter_backends = [DjangoFilterBackend,]
-    # filterset_class = RecipeFilter
+    filterset_class = RecipeFilter
     pagination_class = CustomPageNumberPagination
 
     def get_serializer_class(self):
@@ -61,9 +62,6 @@ class RecipeView(viewsets.ModelViewSet):
             return RecipeAllSerializer
         return AddRecipeSerializer
     
-    def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
-
 
     @action(
         detail=True,

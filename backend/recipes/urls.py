@@ -6,7 +6,7 @@ from .views import TagView, IngredientView, RecipeView
 router = DefaultRouter()
 router.register('tags', TagView, basename='tags')
 router.register('ingredients', IngredientView, basename='ingredients')
-# router.register('recipes', RecipeView, basename='recipes')
+router.register('recipes', RecipeView, basename='recipes')
 
 urlpatterns = [
     path('', include(router.urls)),
