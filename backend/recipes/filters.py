@@ -3,8 +3,6 @@ import django_filters as filters
 from .models import Ingredient, Recipe
 
 
-
-
 class RecipeFilter(filters.FilterSet):
     tags = filters.AllValuesMultipleFilter(
         field_name='tags__slug',
@@ -38,7 +36,7 @@ class RecipeFilter(filters.FilterSet):
         if value:
             queryset = queryset.filter(shopping_cart__user=self.request.user)
         return queryset
-    
+
 
 class IngredientsFilter(filters.FilterSet):
     name = filters.CharFilter(

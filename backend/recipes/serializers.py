@@ -4,7 +4,6 @@ from rest_framework.serializers import ValidationError
 from django.contrib.auth import get_user_model
 
 
-
 from .models import (
     Tag,
     Ingredient,
@@ -15,8 +14,8 @@ from .models import (
 )
 from users.serializers import CustomUserSerializer
 
-
 User = get_user_model()
+
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
@@ -34,6 +33,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time')
+
 
 class RecipeIngredientsSerializer(serializers.ModelSerializer):
     name = serializers.SlugRelatedField(
@@ -56,14 +56,13 @@ class RecipeIngredientsSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'measurement_unit', 'amount')
 
 
-
 class RecipeAllSerializer(serializers.ModelSerializer):
     author = CustomUserSerializer(read_only=True)
     tags = TagSerializer(many=True, read_only=True)
     ingredients = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
     is_favorited = serializers.SerializerMethodField()
-    
+
     class Meta:
         model = Recipe
         fields = (
@@ -88,7 +87,6 @@ class RecipeAllSerializer(serializers.ModelSerializer):
             return False
         return ShoppingCart.objects.filter(recipe=obj,
                                            user=request.user).exists()
-
 
 
 class IngredientCreateSerializer(serializers.ModelSerializer):
@@ -170,7 +168,6 @@ class AddRecipeSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = ('id', 'tags', 'author', 'ingredients',
                   'name', 'image', 'text', 'cooking_time')
-    
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
@@ -204,4 +201,3 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
                                        recipe__id=recipe_id).exists():
             raise ValidationError('Уже в списке.')
         return data
-

@@ -32,6 +32,7 @@ from .pagination import CustomPageNumberPagination
 from .permissions import AuthorOrAdmin
 from .utils import download_file
 
+
 class TagView(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
@@ -41,19 +42,19 @@ class TagView(viewsets.ModelViewSet):
 
 class IngredientView(viewsets.ModelViewSet):
     queryset = Ingredient.objects.all()
-    permission_classes = [IsAuthenticatedOrReadOnly,]
+    permission_classes = [IsAuthenticatedOrReadOnly, ]
     serializer_class = IngredientSerializer
     search_fields = ['name', ]
     pagination_class = None
-    filter_backends = [DjangoFilterBackend,]
+    filter_backends = [DjangoFilterBackend, ]
     filter_class = IngredientsFilter
 
 
 class RecipeView(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly|AuthorOrAdmin]
-    filter_backends = [DjangoFilterBackend,]
+    permission_classes = [IsAuthenticatedOrReadOnly | AuthorOrAdmin]
+    filter_backends = [DjangoFilterBackend, ]
     filterset_class = RecipeFilter
     pagination_class = CustomPageNumberPagination
 
@@ -61,13 +62,12 @@ class RecipeView(viewsets.ModelViewSet):
         if self.request.method == 'GET':
             return RecipeAllSerializer
         return AddRecipeSerializer
-    
 
     @action(
         detail=True,
         methods=["POST", "DELETE"],
         url_path="favorite",
-        permission_classes=[AuthorOrAdmin,],
+        permission_classes=[AuthorOrAdmin, ],
     )
     def favorite(self, request, pk=None):
         user = request.user
@@ -80,7 +80,7 @@ class RecipeView(viewsets.ModelViewSet):
                 )
             favorite = Favorite.objects.create(user=user, recipe=recipe)
             serializer = FavoriteSerializer(favorite,
-                                             context={"request": request})
+                                            context={"request": request})
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         if request.method == "DELETE":
@@ -89,7 +89,6 @@ class RecipeView(viewsets.ModelViewSet):
                 favorite.delete()
                 return Response(status=status.HTTP_204_NO_CONTENT)
             return Response(status=status.HTTP_400_BAD_REQUEST)
-
 
     @action(
         detail=True,
@@ -111,7 +110,10 @@ class RecipeView(viewsets.ModelViewSet):
             serializer = ShoppingCartSerializer(
                 shoping_cart, context={"request": request}
             )
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(
+                serializer.data,
+                {"в корзине покупок"},
+                status=status.HTTP_201_CREATED)
 
         if request.method == "DELETE":
             delete_shoping_cart = ShoppingCart.objects.filter(user=user,

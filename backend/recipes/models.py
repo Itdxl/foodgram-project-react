@@ -99,7 +99,8 @@ class Recipe(models.Model):
 class IngredientInRecipe(models.Model):
     amount = models.PositiveIntegerField(
         verbose_name='Кол-во ингредиента',
-         validators=[
+        validators=[
+
             MinValueValidator(1, 'Кол-во не меньше 1'),
         ],
     )
@@ -139,7 +140,6 @@ class RecipeTag(models.Model):
 
     def __str__(self):
         return 'Тег рецепта'
-
 
 
 class Favorite(models.Model):
