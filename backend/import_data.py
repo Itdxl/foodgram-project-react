@@ -1,7 +1,9 @@
 import json
 from recipes.models import Ingredient
 from django.conf import settings
+
 settings.configure()
+
 # Открытие JSON-файла и чтение его содержимого
 with open('ingredients.json', 'r') as file:
     json_data = json.load(file)

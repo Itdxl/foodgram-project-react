@@ -1,10 +1,17 @@
-# FROM python:3.7-slim
+FROM python:3.7-slim
 
-# WORKDIR /app
+WORKDIR /app
 
-# COPY requirements.txt .
+COPY . .
 
-# RUN pip3 install -r requirements.txt --no-cache-dir
+RUN pip install --no-cache-dir -r requirements.txt
 
-# COPY . .
+# Выполните миграции Django
+RUN python manage.py migrate
 
+# Cтатикa
+# RUN python manage.py collectstatic --noinput
+
+# EXPOSE 8000
+
+CMD ["gunicorn", "foodgram.wsgi:application", "--bind", "0.0.0.0:8000"]
