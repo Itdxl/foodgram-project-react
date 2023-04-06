@@ -11,7 +11,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.8
+          python-version: 3.7
 
       - name: Install dependencies
         run: |
@@ -38,7 +38,7 @@ jobs:
         with:
           file: ./backend/Dockerfile
           push: true
-          tags: rocke215/infra_backend
+          tags: itdxl/foodgram:latest
 
   deploy:
       runs-on: ubuntu-latest
@@ -53,7 +53,7 @@ jobs:
             key: ${{ secrets.SSH_KEY }}
             stack_file_name: docker-compose.yaml
             script: |
-              sudo docker pull rocke215/infra_backend
+              sudo docker pull itdxl/foodgram:latest
               sudo docker-compose stop
               sudo docker-compose rm backend
               sudo docker-compose up -d --build
