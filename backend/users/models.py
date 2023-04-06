@@ -1,5 +1,6 @@
-from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 
 
 class User(AbstractUser):
@@ -50,6 +51,10 @@ class Follow(models.Model):
         related_name='following',
         verbose_name='Автор, на которого подписываются'
     )
+
+    def validate_sef_follow(self):
+        if self.user == self.author:
+            raise ValidationError("Нельзя подписаться на самого себя.")
 
     class Meta:
         constraints = [models.UniqueConstraint(

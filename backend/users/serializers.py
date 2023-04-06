@@ -37,8 +37,7 @@ class FollowingRecipesSerializers(serializers.ModelSerializer):
         fields = ('id', 'name', 'image', 'cooking_time')
 
 
-class ShowFollowSerializer(serializers.ModelSerializer):
-    is_subscribed = serializers.SerializerMethodField()
+class ShowFollowSerializer(CustomUserSerializer):
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
 
@@ -49,12 +48,6 @@ class ShowFollowSerializer(serializers.ModelSerializer):
             'is_subscribed', 'recipes', 'recipes_count'
         )
         read_only_fields = fields
-
-    def get_is_subscribed(self, obj):
-        if not self.context['request'].user.is_authenticated:
-            return False
-        return Follow.objects.filter(
-            author=obj, user=self.context['request'].user).exists()
 
     def get_recipes(self, obj):
         recipes_limit = int(self.context['request'].GET.get(

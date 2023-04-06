@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
 
 User = get_user_model()
@@ -17,7 +17,14 @@ class Tag(models.Model):
     color = models.CharField(
         verbose_name='Цвет тега',
         unique=True,
-        max_length=7)
+        max_length=7,
+        validators=[
+            RegexValidator(
+                r'^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$',
+                message='Цвет должен быть в формате HEX'
+            )
+        ]
+    )
 
     class Meta:
         ordering = ('name',)
@@ -50,10 +57,7 @@ class Ingredient(models.Model):
 
 class Recipe(models.Model):
     text = models.TextField(verbose_name='Описание рецепта')
-    image = models.ImageField(
-        # verbose_name='Изоображение',
-        # upload_to='recipes/'
-    )
+    image = models.ImageField(verbose_name='Изоображение')
     name = models.CharField(
         verbose_name='Название рецепта',
         max_length=100
@@ -68,13 +72,10 @@ class Recipe(models.Model):
         Ingredient,
         through='IngredientInRecipe',
         verbose_name='Ингредиенты в рецепте',
-        # related_name="recipes"
     )
     tags = models.ManyToManyField(
         Tag,
-        # through='TagsInRecipe',
         verbose_name='Теги для рецепта',
-        # related_name="recipes"
     )
     cooking_time = models.PositiveIntegerField(
         verbose_name='Время приготовления',
@@ -117,7 +118,7 @@ class IngredientInRecipe(models.Model):
 
     class Meta:
         verbose_name = 'Количество ингредиента'
-        # verbose_name_plural = 'Количество ингредиентов'
+        verbose_name_plural = 'Количество ингредиентов'
 
 
 class RecipeTag(models.Model):
@@ -159,6 +160,12 @@ class Favorite(models.Model):
     class Meta:
         ordering = ('-id',)
         verbose_name = 'Избранное'
+        constraints = (
+            models.UniqueConstraint(
+                fields=('user', 'recipe'),
+                name='uniq_favorite_user_recipe'
+            ),
+        )
 
 
 class ShoppingCart(models.Model):

@@ -35,7 +35,7 @@ class FollowApiView(APIView):
     permission_classes = [permissions.IsAuthenticated, ]
 
     def post(self, request, *args, **kwargs):
-        pk = kwargs.get('id', None)
+        pk = kwargs.get('id')
         author = get_object_or_404(User, pk=pk)
         user = request.user
 

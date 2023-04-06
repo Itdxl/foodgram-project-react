@@ -1,6 +1,5 @@
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
-from rest_framework.serializers import ValidationError
 from django.contrib.auth import get_user_model
 
 
@@ -68,7 +67,7 @@ class RecipeAllSerializer(serializers.ModelSerializer):
         fields = (
             'id', 'tags', 'author', 'ingredients',
             'is_favorited', 'is_in_shopping_cart',
-            'name', 'image', 'text', 'cooking_time',
+            'name', 'image', 'text', 'cooking_time'
         )
 
     def get_ingredients(self, obj):
@@ -106,6 +105,11 @@ class AddRecipeSerializer(serializers.ModelSerializer):
         queryset=Tag.objects.all(), many=True
     )
     cooking_time = serializers.IntegerField()
+
+    class Meta:
+        model = Recipe
+        fields = ('id', 'tags', 'author', 'ingredients',
+                  'name', 'image', 'text', 'cooking_time')
 
     def to_representation(self, recipe):
         return RecipeSerializer(
@@ -164,40 +168,31 @@ class AddRecipeSerializer(serializers.ModelSerializer):
             IngredientInRecipe.objects.bulk_create(ingredients_list)
         return instance
 
-    class Meta:
-        model = Recipe
-        fields = ('id', 'tags', 'author', 'ingredients',
-                  'name', 'image', 'text', 'cooking_time')
 
-
-class FavoriteSerializer(serializers.ModelSerializer):
+class CommonSerializer(serializers.ModelSerializer):
     recipe = serializers.PrimaryKeyRelatedField(queryset=Recipe.objects.all())
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
 
     class Meta:
+        abstract = True
+        fields = ('user', 'recipe')
+
+    def validate(self, data):
+        user = data['user']
+        recipe_id = data['recipe'].id
+        model = self.Meta.model
+
+        if model.objects.filter(user=user, recipe__id=recipe_id).exists():
+            raise serializers.ValidationError('Уже в списке.')
+
+        return data
+
+
+class FavoriteSerializer(CommonSerializer):
+    class Meta(CommonSerializer.Meta):
         model = Favorite
-        fields = ('user', 'recipe')
-
-    def validate(self, data):
-        user = data['user']
-        recipe_id = data['recipe'].id
-        if Favorite.objects.filter(user=user, recipe__id=recipe_id).exists():
-            raise ValidationError('Уже в избранном.')
-        return data
 
 
-class ShoppingCartSerializer(serializers.ModelSerializer):
-    recipe = serializers.PrimaryKeyRelatedField(queryset=Recipe.objects.all())
-    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-
-    class Meta:
+class ShoppingCartSerializer(CommonSerializer):
+    class Meta(CommonSerializer.Meta):
         model = ShoppingCart
-        fields = ('user', 'recipe')
-
-    def validate(self, data):
-        user = data['user']
-        recipe_id = data['recipe'].id
-        if ShoppingCart.objects.filter(user=user,
-                                       recipe__id=recipe_id).exists():
-            raise ValidationError('Уже в списке.')
-        return data

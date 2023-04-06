@@ -3,6 +3,7 @@ django-filter==22.1
 djangorestframework==3.13.1
 drf_extra_fields==3.4.1
 djoser==2.1.0
+rf-yasg==1.21.5
 psycopg2-binary==2.9.3
 backports.zoneinfo==0.2.1
 importlib-metadata==1.7.0
