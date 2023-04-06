@@ -5,7 +5,7 @@ from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
 from users.models import Follow
-from ..recipes.models import (
+from recipes.models import (
     Tag,
     Ingredient,
     Recipe,
@@ -13,7 +13,6 @@ from ..recipes.models import (
     IngredientInRecipe,
     ShoppingCart
 )
-from .serializers import CustomUserSerializer
 
 
 User = get_user_model()
@@ -56,6 +55,22 @@ class RecipeIngredientsSerializer(serializers.ModelSerializer):
     class Meta:
         model = IngredientInRecipe
         fields = ('id', 'name', 'measurement_unit', 'amount')
+
+
+class CustomUserSerializer(UserSerializer):
+    is_subscribed = serializers.SerializerMethodField(read_only=True)
+
+    class Meta():
+        model = User
+        fields = ('id', 'email', 'username', 'first_name',
+                  'last_name', 'is_subscribed')
+
+    def get_is_subscribed(self, obj):
+        request = self.context.get('request')
+        if not request or request.user.is_anonymous:
+            return False
+        return Follow.objects.filter(user=self.context['request'].user,
+                                     author=obj).exists()
 
 
 class RecipeAllSerializer(serializers.ModelSerializer):
@@ -205,22 +220,6 @@ class UserRegistrationSerializer(UserCreateSerializer):
     class Meta(UserCreateSerializer.Meta):
         model = User
         fields = ('email', 'username', 'first_name', 'last_name', 'password')
-
-
-class CustomUserSerializer(UserSerializer):
-    is_subscribed = serializers.SerializerMethodField(read_only=True)
-
-    class Meta():
-        model = User
-        fields = ('id', 'email', 'username', 'first_name',
-                  'last_name', 'is_subscribed')
-
-    def get_is_subscribed(self, obj):
-        request = self.context.get('request')
-        if not request or request.user.is_anonymous:
-            return False
-        return Follow.objects.filter(user=self.context['request'].user,
-                                     author=obj).exists()
 
 
 class FollowingRecipesSerializers(serializers.ModelSerializer):
