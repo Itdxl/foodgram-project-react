@@ -42,8 +42,9 @@ jobs:
         username: ${{ secrets.USER }}
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.PASSPHRASE }}
+        #10000 try
         script: |
-
+          cd foodgram-project-react/infra
           sudo docker-compose stop
           sudo docker-compose rm backend
           rm .env
