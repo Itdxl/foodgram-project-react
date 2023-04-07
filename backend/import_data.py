@@ -1,18 +1,18 @@
-import json
+import csv
+
+from django.core.management.base import BaseCommand
+
 from recipes.models import Ingredient
-from django.conf import settings
 
-settings.configure()
 
-# Открытие JSON-файла и чтение его содержимого
-with open('ingredients.json', 'r') as file:
-    json_data = json.load(file)
+class Command(BaseCommand):
+    help = "import data from ingredients.csv"
 
-# Итерация по объектам в JSON-файле
-for item in json_data:
-    my_model = Ingredient()
-    my_model.field1 = item['field1']
-    my_model.field2 = item['field2']
-
-    # Сохранение объекта в базе данных
-    my_model.save()
+    def handle(self, *args, **kwargs):
+        with open("data/ingridient.csv", encoding="utf-8") as file:
+            reader = csv.reader(file)
+            next(reader)
+            ingredient_to_add = [Ingredient(name=row[0],
+                                 measurment_unit=row[1],)
+                                 for row in reader]
+            Ingredient.objects.bulk_create(ingredient_to_add)
