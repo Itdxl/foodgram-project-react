@@ -31,7 +31,7 @@ jobs:
   #           context: ./frontend
   #           file: ./frontend/Dockerfile
   #           tags: itdxl/foodgramfront:latest
-  # check deploy withous pushing to docker
+  # check deploy withous pushing to docker 2
   deploy:
     runs-on: ubuntu-latest
     # needs: build_and_push_to_docker_hub
