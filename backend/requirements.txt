@@ -1,4 +1,5 @@
 Django==3.2.9
+django-cors-headers==3.14.0
 django-filter==22.1
 djangorestframework==3.13.1
 drf_extra_fields==3.4.1

@@ -4,8 +4,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -39,10 +37,12 @@ INSTALLED_APPS = [
     'djoser',
     'drf_yasg',
     'django_filters',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -165,3 +165,7 @@ DJOSER = {
         'user_list': ['rest_framework.permissions.AllowAny']
     },
 }
+
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_URLS_REGEX = r'^/api/.*$'
