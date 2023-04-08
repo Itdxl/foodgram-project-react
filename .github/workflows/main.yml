@@ -59,7 +59,7 @@ jobs:
           echo DB_PORT=${{ secrets.DB_PORT }} >> .env
           sudo docker-compose stop
           sudo docker ps -a | grep Exit | cut -d ' ' -f 1 | xargs sudo docker rm
-          sudo docker rmi itdxl/foodgramfront:latest
-          sudo docker rmi itdxl/foodgramback:latest
+          sudo docker rmi itdxl/foodgramfront
+          sudo docker rmi itdxl/foodgramback
           sudo docker-compose up -d
           sudo docker image prune -a
