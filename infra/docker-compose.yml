@@ -11,11 +11,8 @@ services:
     volumes:
       - db_volume:/var/lib/postgresql/data/
     restart: always
-    environment:
-      POSTGRES_USER: foodgram_user
-      POSTGRES_PASSWORD: password
-    ports:
-      - "5432:5432"
+    env_file:
+      - ./.env
   
   backend:
     image: itdxl/foodgramback:latest
