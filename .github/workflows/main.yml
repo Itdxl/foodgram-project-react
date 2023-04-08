@@ -1,7 +1,7 @@
 name: yamdb workflow
 
 on: push
-# + test env on server 3
+# + test env on server 4 hope
 jobs:
   # build_and_push_to_docker_hub:
   #     name: Push Docker images to Docker Hub
