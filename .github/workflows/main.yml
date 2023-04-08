@@ -1,7 +1,7 @@
 name: yamdb workflow
 
 on: push
-# + test env on server 5
+# + test env on server 6 new postgres
 jobs:
   # build_and_push_to_docker_hub:
   #     name: Push Docker images to Docker Hub
