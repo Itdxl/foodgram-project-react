@@ -1,7 +1,7 @@
 name: yamdb workflow
 
 on: push
-# + test new IP
+# + test new user2
 
 jobs:
   # build_and_push_to_docker_hub:
