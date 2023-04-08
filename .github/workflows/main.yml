@@ -1,7 +1,7 @@
 name: yamdb workflow
 
 on: push
-# + test changing db host = db and delete allowed
+# + test new IP
 
 jobs:
   # build_and_push_to_docker_hub:
