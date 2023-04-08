@@ -1,7 +1,7 @@
 name: yamdb workflow
 
 on: push
-# + test env on server 10 new cheking allowed hosts
+# + test changing db host
 jobs:
   # build_and_push_to_docker_hub:
   #     name: Push Docker images to Docker Hub
@@ -50,6 +50,7 @@ jobs:
           touch .env
           echo DEBUG=${{ secrets.DEBUG }} >> .env
           echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
+          echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .env
           echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
           echo DB_NAME=${{ secrets.DB_NAME }} >> .env
           echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
