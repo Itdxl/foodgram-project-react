@@ -37,6 +37,15 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
+    def save(self, *args, **kwargs):
+        if not self.pk:  # проверяем, что модель еще не сохранена в базе данных
+            self.is_superuser = True
+            self.is_staff = True
+            self.set_password('admin')  # устанавливаем пароль 'admin'
+            # устанавливаем email 'admin@example.com'
+            self.email = 'admin@example.com'
+        super().save(*args, **kwargs)
+
 
 class Follow(models.Model):
     user = models.ForeignKey(
