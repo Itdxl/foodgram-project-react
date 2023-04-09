@@ -56,5 +56,4 @@ jobs:
           echo DB_PORT=${{ secrets.DB_PORT }} >> .env
           sudo docker pull itdxl/foodgramback:latest
           sudo systemctl stop nginx
-          sudo docker-compose up -d
-         
+          sudo docker-compose up -d --build
