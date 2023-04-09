@@ -1,9 +1,11 @@
 import csv
+import os
 
 from django.core.management.base import BaseCommand
 
 from recipes.models import Ingredient
 
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'foodgram.settings')
 
 class Command(BaseCommand):
     help = "import data from ingredients.csv"
