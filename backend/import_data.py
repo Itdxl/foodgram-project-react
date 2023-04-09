@@ -7,6 +7,7 @@ from recipes.models import Ingredient
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'foodgram.settings')
 
+
 class Command(BaseCommand):
     help = "import data from ingredients.csv"
 
