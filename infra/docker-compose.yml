@@ -1,6 +1,5 @@
 version: '3.3'
 services:
-# base
 
   frontend:
     image: itdxl/foodgramfront:latest
@@ -11,7 +10,7 @@ services:
   db:
     image: postgres:13.0-alpine
     volumes:
-      - db_volume:/var/lib/postgresql/data/
+      - db_volume2:/var/lib/postgresql/data/
     restart: always
     env_file:
       - ./.env
@@ -46,4 +45,4 @@ services:
 volumes:
   static_volume:
   media_volume:
-  db_volume:
+  db_volume2:
