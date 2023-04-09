@@ -1,7 +1,7 @@
 name: yamdb workflow
 
 on: push
-# reinstall postgres ++
+# reinstall postgres ++ f
 jobs:
 #   build_and_push_to_docker_hub:
 #       name: Push Docker images to Docker Hub
