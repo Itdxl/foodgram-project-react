@@ -116,6 +116,11 @@ class RecipeView(viewsets.ModelViewSet):
             action_object.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
 
+        if request.method == 'GET':
+            if action_type == "favorite":
+                return 
+
+
     @action(
         detail=True,
         methods=["POST", "DELETE"],
@@ -135,6 +140,7 @@ class RecipeView(viewsets.ModelViewSet):
     def shopping_cart(self, request, pk=None):
         return self.perform_favorite_or_shopping_cart_action(request, pk,
                                                              "shopping_cart")
+    
 
     @action(detail=False, methods=["GET"],
             permission_classes=[IsAuthenticated])
@@ -209,6 +215,7 @@ class ListFollowViewSet(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated, ]
     serializer_class = ShowFollowSerializer
     pagination_class = CustomPageNumberPagination
+    filterset_class = RecipeFilter
 
     def get_queryset(self):
         user = self.request.user
