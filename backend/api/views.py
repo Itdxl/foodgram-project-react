@@ -94,9 +94,9 @@ class RecipeView(viewsets.ModelViewSet):
             action_object = action_model.objects.create(user=user,
                                                         recipe=recipe)
             serializer = (
-                ShowFollowSerializer(action_object, context={"request": request})
+                FavoriteSerializer(action_object, context={"request": request})
                 if action_type == "favorite"
-                else ShowFollowSerializer(action_object,
+                else ShoppingCartSerializer(action_object,
                                             context={"request": request})
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
