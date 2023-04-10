@@ -153,38 +153,20 @@ class AddRecipeSerializer(serializers.ModelSerializer):
         author = self.context.get('request').user
         tags_data = validated_data.pop('tags')
         ingredients_data = validated_data.pop('ingredients')
-        if not ingredients_data:
-            raise serializers.ValidationError('минимум один ингредиент')
-        elif not tags_data:
-            raise serializers.ValidationError('минимум один тег')
         recipe = Recipe.objects.create(author=author, **validated_data)
-        for ingredient in ingredients_data:
-            ingredient_model = ingredient['id']
-            amount = ingredient['amount']
-            IngredientInRecipe.objects.create(
-                ingredient=ingredient_model, recipe=recipe, amount=amount
-            )
+        self.add_recipe_ingredients(ingredients_data, recipe)
         recipe.tags.set(tags_data)
         return recipe
 
-    def update(self, instance, validated_data):
-        ingredients = validated_data.pop('ingredients', None)
-        tags = validated_data.pop('tags', None)
-        instance = super().update(instance, validated_data)
-        if tags:
-            instance.tags.set(tags)
-        if ingredients:
-            instance.ingredients.clear()
-            ingredients_list = [
-                IngredientInRecipe(
-                    recipe=instance,
-                    ingredient=ingredient.get('id'),
-                    amount=ingredient.get('amount')
-                )
-                for ingredient in ingredients
-            ]
-            IngredientInRecipe.objects.bulk_create(ingredients_list)
-        return instance
+    def update(self, recipe, validated_data):
+        if 'ingredients' in validated_data:
+            ingredients = validated_data.pop('ingredients')
+            recipe.ingredients.clear()
+            self.add_recipe_ingredients(ingredients, recipe)
+        if 'tags' in validated_data:
+            tags_data = validated_data.pop('tags')
+            recipe.tags.set(tags_data)
+        return super().update(recipe, validated_data)
 
 
 class CommonSerializer(serializers.ModelSerializer):
@@ -205,6 +187,15 @@ class CommonSerializer(serializers.ModelSerializer):
 
         return data
 
+
+class FavoriteSerializer(CommonSerializer):
+    class Meta(CommonSerializer.Meta):
+        model = Favorite
+
+
+class ShoppingCartSerializer(CommonSerializer):
+    class Meta(CommonSerializer.Meta):
+        model = ShoppingCart
 
 
 class UserRegistrationSerializer(UserCreateSerializer):
