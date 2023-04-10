@@ -77,8 +77,8 @@ class RecipeAllSerializer(serializers.ModelSerializer):
     author = CustomUserSerializer(read_only=True)
     tags = TagSerializer(many=True, read_only=True)
     ingredients = serializers.SerializerMethodField()
-    is_in_shopping_cart = serializers.SerializerMethodField()
-    is_favorited = serializers.SerializerMethodField()
+    is_in_shopping_cart = serializers.SerializerMethodField("def get_is_in_shopping_cart")
+    is_favorited = serializers.SerializerMethodField("get_is_favorited")
 
     class Meta:
         model = Recipe
