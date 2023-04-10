@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
-from rest_framework.serializers import ValidationError 
+
 from users.models import Follow
 from recipes.models import (
     Tag,
@@ -228,41 +228,7 @@ class FollowingRecipesSerializers(serializers.ModelSerializer):
         fields = ('id', 'name', 'image', 'cooking_time')
 
 
-class FavoriteSerializer(serializers.ModelSerializer): 
-    recipe = serializers.PrimaryKeyRelatedField(queryset=Recipe.objects.all()) 
-    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all()) 
- 
-    class Meta: 
-        model = Favorite 
-        fields = ('user', 'recipe') 
- 
-    def validate(self, data): 
-        user = data['user'] 
-        recipe_id = data['recipe'].id 
-        if Favorite.objects.filter(user=user, recipe__id=recipe_id).exists(): 
-            raise ValidationError('Уже в избранном.') 
-        return data 
- 
- 
-class ShoppingCartSerializer(serializers.ModelSerializer): 
-    recipe = serializers.PrimaryKeyRelatedField(queryset=Recipe.objects.all()) 
-    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all()) 
- 
-    class Meta: 
-        model = ShoppingCart 
-        fields = ('user', 'recipe') 
- 
-    def validate(self, data): 
-        user = data['user'] 
-        recipe_id = data['recipe'].id 
-        if ShoppingCart.objects.filter(user=user, 
-                                       recipe__id=recipe_id).exists(): 
-            raise ValidationError('Уже в списке.') 
-        return data 
-
-
-class ShowFollowSerializer(serializers.ModelSerializer):
-    is_subscribed = serializers.SerializerMethodField()
+class ShowFollowSerializer(CustomUserSerializer):
     recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
 
@@ -273,12 +239,6 @@ class ShowFollowSerializer(serializers.ModelSerializer):
             'is_subscribed', 'recipes', 'recipes_count'
         )
         read_only_fields = fields
-
-    def get_is_subscribed(self, obj):
-        if not self.context['request'].user.is_authenticated:
-            return False
-        return Follow.objects.filter(
-            author=obj, user=self.context['request'].user).exists()
 
     def get_recipes(self, obj):
         recipes_limit = int(self.context['request'].GET.get(
