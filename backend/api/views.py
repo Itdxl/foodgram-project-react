@@ -118,8 +118,7 @@ class RecipeView(viewsets.ModelViewSet):
 
         if request.method == 'GET':
             if action_type == "favorite":
-                return 
-
+                return
 
     @action(
         detail=True,
@@ -140,7 +139,6 @@ class RecipeView(viewsets.ModelViewSet):
     def shopping_cart(self, request, pk=None):
         return self.perform_favorite_or_shopping_cart_action(request, pk,
                                                              "shopping_cart")
-    
 
     @action(detail=False, methods=["GET"],
             permission_classes=[IsAuthenticated])
