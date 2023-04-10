@@ -1,44 +1,34 @@
 import django_filters as filters
 
-from recipes.models import Ingredient, Recipe, User
+from recipes.models import Ingredient, Recipe, User, Tag
 
 
 class RecipeFilter(filters.FilterSet):
-    author = filters.ModelChoiceFilter(
-        queryset=User.objects.all()
+    tags = filters.ModelMultipleChoiceFilter(
+        field_name="tags__slug",
+        to_field_name="slug",
+        queryset=Tag.objects.all(),
     )
-    tags = filters.AllValuesMultipleFilter(
-        field_name='tags__slug',
-        lookup_expr="iexact",
-        label='Tags',
-    )
-    is_favorited = filters.BooleanFilter(
-        method='get_favorite',
-        label='Favorited',
-    )
-    is_in_shopping_cart = filters.BooleanFilter(
-        method='get_shopping',
-        label='Is in shopping list',
+    is_favorited = filters.CharFilter(method="get_is_favorited")
+    is_in_shopping_cart = filters.CharFilter(
+        method='get_is_in_shopping_cart'
     )
 
     class Meta:
         model = Recipe
-        fields = (
-            'is_favorited',
-            'author',
-            'tags',
-            'is_in_shopping_cart',
-        )
+        fields = ["author", "tags", "is_favorited", "is_in_shopping_cart"]
 
-    def filter_is_favorited(self, queryset, name, value):
-        if self.request.user.is_authenticated and value:
-            return queryset.filter(favorites_recipe__user=self.request.user)
-        return queryset
+    def get_is_favorited(self, queryset, name, value):
+        user = self.request.user
+        if value:
+            return Recipe.objects.filter(favorite__user=user)
+        return Recipe.objects.all()
 
-    def filter_is_in_shopping_cart(self, queryset, name, value):
-        if self.request.user.is_authenticated and value:
-            return queryset.filter(carts__user=self.request.user)
-        return queryset
+    def get_is_in_shopping_cart(self, queryset, name, value):
+        user = self.request.user
+        if value:
+            return Recipe.objects.filter(shopping_cart__user=user)
+        return Recipe.objects.all()
 
 
 class IngredientsFilter(filters.FilterSet):

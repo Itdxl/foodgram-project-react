@@ -215,7 +215,6 @@ class ListFollowViewSet(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated, ]
     serializer_class = ShowFollowSerializer
     pagination_class = CustomPageNumberPagination
-    filterset_class = RecipeFilter
 
     def get_queryset(self):
         user = self.request.user
