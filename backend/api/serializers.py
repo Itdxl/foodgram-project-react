@@ -73,19 +73,19 @@ class CustomUserSerializer(UserSerializer):
                                      author=obj).exists()
 
 
-class ShowRecipeFullSerializer(serializers.ModelSerializer):
-    tags = TagSerializer(many=True, read_only=True)
+class RecipeAllSerializer(serializers.ModelSerializer):
     author = CustomUserSerializer(read_only=True)
+    tags = TagSerializer(many=True, read_only=True)
     ingredients = serializers.SerializerMethodField()
-    is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
+    is_favorited = serializers.SerializerMethodField()
 
     class Meta:
         model = Recipe
         fields = (
             'id', 'tags', 'author', 'ingredients',
             'is_favorited', 'is_in_shopping_cart',
-            'name', 'image', 'text', 'cooking_time',
+            'name', 'image', 'text', 'cooking_time'
         )
 
     def get_ingredients(self, obj):
@@ -93,17 +93,20 @@ class ShowRecipeFullSerializer(serializers.ModelSerializer):
         return RecipeIngredientsSerializer(ingredients, many=True).data
 
     def get_is_favorited(self, obj):
-        request = self.context.get('request')
-        if not request or request.user.is_anonymous:
+        request = self.context.get("request")
+        if request is None or request.user.is_anonymous:
             return False
-        return Favorite.objects.filter(recipe=obj, user=request.user).exists()
+        user = request.user
+        return Favorite.objects.filter(recipe=obj, user=user).exists()
 
     def get_is_in_shopping_cart(self, obj):
-        request = self.context.get('request')
-        if not request or request.user.is_anonymous:
+        request = self.context.get("request")
+        if request is None or request.user.is_anonymous:
             return False
-        return ShoppingCart.objects.filter(recipe=obj,
-                                           user=request.user).exists()
+        user = request.user
+        return ShoppingCart.objects.filter(
+            recipe=obj, user=user
+        ).exists()
 
 
 class IngredientCreateSerializer(serializers.ModelSerializer):
@@ -205,7 +208,7 @@ class CommonSerializer(serializers.ModelSerializer):
 
         return data
 
-
+    
 class FavoriteSerializer(CommonSerializer):
     class Meta(CommonSerializer.Meta):
         model = Favorite
