@@ -240,14 +240,14 @@ class ShowFollowSerializer(CustomUserSerializer):
         )
         read_only_fields = fields
 
-    def get_recipes(self, obj):
-        recipes_limit = int(self.context['request'].GET.get(
-            'recipes_limit', 10))
-        user = get_object_or_404(User, pk=obj.pk)
-        recipes = Recipe.objects.filter(author=user)[:recipes_limit]
+    # def get_recipes(self, obj):
+    #     recipes_limit = int(self.context['request'].GET.get(
+    #         'recipes_limit', 10))
+    #     user = get_object_or_404(User, pk=obj.pk)
+    #     recipes = Recipe.objects.filter(author=user)[:recipes_limit]
 
-        return FollowingRecipesSerializers(recipes, many=True).data
+    #     return FollowingRecipesSerializers(recipes, many=True).data
 
-    def get_recipes_count(self, obj):
-        user = get_object_or_404(User, pk=obj.pk)
-        return Recipe.objects.filter(author=user).count()
+    # def get_recipes_count(self, obj):
+    #     user = get_object_or_404(User, pk=obj.pk)
+    #     return Recipe.objects.filter(author=user).count()

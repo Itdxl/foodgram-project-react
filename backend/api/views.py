@@ -71,81 +71,81 @@ class RecipeView(viewsets.ModelViewSet):
             return RecipeAllSerializer
         return AddRecipeSerializer
 
-    # def perform_favorite_or_shopping_cart_action(self,
-    #                                              request,
-    #                                              pk=None, action_type=None):
-    #     user = request.user
-    #     recipe = get_object_or_404(Recipe, id=pk)
-    #     if request.method == "POST":
-    #         if action_type == "favorite":
-    #             action_model = Favorite
-    #         elif action_type == "shopping_cart":
-    #             action_model = ShoppingCart
-    #         else:
-    #             return Response(
-    #                 {"error": "Неправильный тип действия"},
-    #                 status=status.HTTP_400_BAD_REQUEST
-    #             )
-    #         if action_model.objects.filter(user=user, recipe=recipe).exists():
-    #             return Response(
-    #                 {"error": f"Этот рецепт уже в {action_type}"},
-    #                 status=status.HTTP_400_BAD_REQUEST,
-    #             )
-    #         action_object = action_model.objects.create(user=user,
-    #                                                     recipe=recipe)
-    #         serializer = (
-    #             ShowFollowSerializer(action_object, context={"request": request})
-    #             if action_type == "favorite"
-    #             else ShowFollowSerializer(action_object,
-    #                                         context={"request": request})
-    #         )
-    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    def perform_favorite_or_shopping_cart_action(self,
+                                                 request,
+                                                 pk=None, action_type=None):
+        user = request.user
+        recipe = get_object_or_404(Recipe, id=pk)
+        if request.method == "POST":
+            if action_type == "favorite":
+                action_model = Favorite
+            elif action_type == "shopping_cart":
+                action_model = ShoppingCart
+            else:
+                return Response(
+                    {"error": "Неправильный тип действия"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            if action_model.objects.filter(user=user, recipe=recipe).exists():
+                return Response(
+                    {"error": f"Этот рецепт уже в {action_type}"},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            action_object = action_model.objects.create(user=user,
+                                                        recipe=recipe)
+            serializer = (
+                ShowFollowSerializer(action_object, context={"request": request})
+                if action_type == "favorite"
+                else ShowFollowSerializer(action_object,
+                                            context={"request": request})
+            )
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    #     if request.method == "DELETE":
-    #         if action_type == "favorite":
-    #             action_model = Favorite
-    #         elif action_type == "shopping_cart":
-    #             action_model = ShoppingCart
-    #         else:
-    #             return Response(
-    #                 {"error": "Неправильный тип действия"},
-    #                 status=status.HTTP_400_BAD_REQUEST
-    #             )
-    #         action_object = get_object_or_404(action_model, user=user,
-    #                                           recipe=recipe)
-    #         action_object.delete()
-    #         return Response(status=status.HTTP_204_NO_CONTENT)
+        if request.method == "DELETE":
+            if action_type == "favorite":
+                action_model = Favorite
+            elif action_type == "shopping_cart":
+                action_model = ShoppingCart
+            else:
+                return Response(
+                    {"error": "Неправильный тип действия"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            action_object = get_object_or_404(action_model, user=user,
+                                              recipe=recipe)
+            action_object.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
-    # @action(
-    #     detail=True,
-    #     methods=["POST", "DELETE"],
-    #     url_path="favorite",
-    #     permission_classes=[AuthorOrAdmin, ],
-    # )
-    # def favorite(self, request, pk=None):
-    #     return self.perform_favorite_or_shopping_cart_action(request, pk,
-    #                                                          "favorite")
+    @action(
+        detail=True,
+        methods=["POST", "DELETE"],
+        url_path="favorite",
+        permission_classes=[AuthorOrAdmin, ],
+    )
+    def favorite(self, request, pk=None):
+        return self.perform_favorite_or_shopping_cart_action(request, pk,
+                                                             "favorite")
 
-    # @action(
-    #     detail=True,
-    #     methods=["POST", "DELETE"],
-    #     url_path="shopping_cart",
-    #     permission_classes=[AuthorOrAdmin],
-    # )
-    # def shopping_cart(self, request, pk=None):
-    #     return self.perform_favorite_or_shopping_cart_action(request, pk,
-    #                                                          "shopping_cart")
+    @action(
+        detail=True,
+        methods=["POST", "DELETE"],
+        url_path="shopping_cart",
+        permission_classes=[AuthorOrAdmin],
+    )
+    def shopping_cart(self, request, pk=None):
+        return self.perform_favorite_or_shopping_cart_action(request, pk,
+                                                             "shopping_cart")
 
-    # @action(detail=False, methods=["GET"],
-    #         permission_classes=[IsAuthenticated])
-    # def download_shopping_cart(self, request):
-    #     ingredients_list = IngredientInRecipe.objects.filter(
-    #         recipe__shopping_cart__user=request.user
-    #     ).values(
-    #         'ingredient__name',
-    #         'ingredient__measurement_unit'
-    #     ).annotate(amount=Sum('amount'))
-    #     return download_file(ingredients_list)
+    @action(detail=False, methods=["GET"],
+            permission_classes=[IsAuthenticated])
+    def download_shopping_cart(self, request):
+        ingredients_list = IngredientInRecipe.objects.filter(
+            recipe__shopping_cart__user=request.user
+        ).values(
+            'ingredient__name',
+            'ingredient__measurement_unit'
+        ).annotate(amount=Sum('amount'))
+        return download_file(ingredients_list)
 
 
 class UserViewSet(viewsets.ModelViewSet):
