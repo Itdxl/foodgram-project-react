@@ -77,14 +77,10 @@ class RecipeAllSerializer(serializers.ModelSerializer):
     author = CustomUserSerializer(read_only=True)
     tags = TagSerializer(many=True, read_only=True)
     ingredients = serializers.SerializerMethodField("get_ingredients")
-    is_in_shopping_cart = serializers.SerializerMethodField("get_is_in_shopping_cart")
+    is_in_shopping_cart = serializers.SerializerMethodField(
+        "get_is_in_shopping_cart"
+    )
     is_favorited = serializers.SerializerMethodField("get_is_favorited")
-    # ingredients = serializers.SerializerMethodField()
-    # is_favorited = serializers.SerializerMethodField()
-    # is_in_shopping_cart = serializers.SerializerMethodField()
-    ingredients = serializers.SerializerMethodField(read_only=True)
-    is_favorited = serializers.SerializerMethodField()
-    is_in_shopping_cart = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Recipe
@@ -214,7 +210,7 @@ class CommonSerializer(serializers.ModelSerializer):
 
         return data
 
-    
+
 class FavoriteSerializer(CommonSerializer):
     class Meta(CommonSerializer.Meta):
         model = Favorite
