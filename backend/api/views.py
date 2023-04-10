@@ -136,16 +136,16 @@ class RecipeView(viewsets.ModelViewSet):
         return self.perform_favorite_or_shopping_cart_action(request, pk,
                                                              "shopping_cart")
 
-    @action(detail=False, methods=["GET"],
-            permission_classes=[IsAuthenticated])
-    def download_shopping_cart(self, request):
-        ingredients_list = IngredientInRecipe.objects.filter(
-            recipe__shopping_cart__user=request.user
-        ).values(
-            'ingredient__name',
-            'ingredient__measurement_unit'
-        ).annotate(amount=Sum('amount'))
-        return download_file(ingredients_list)
+    # @action(detail=False, methods=["GET"],
+    #         permission_classes=[IsAuthenticated])
+    # def download_shopping_cart(self, request):
+    #     ingredients_list = IngredientInRecipe.objects.filter(
+    #         recipe__shopping_cart__user=request.user
+    #     ).values(
+    #         'ingredient__name',
+    #         'ingredient__measurement_unit'
+    #     ).annotate(amount=Sum('amount'))
+    #     return download_file(ingredients_list)
 
 
 class UserViewSet(viewsets.ModelViewSet):
