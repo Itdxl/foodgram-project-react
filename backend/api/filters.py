@@ -1,6 +1,6 @@
 import django_filters as filters
 
-from recipes.models import Ingredient, Recipe, User, Tag
+from recipes.models import Ingredient, Recipe, Tag
 
 
 class RecipeFilter(filters.FilterSet):
@@ -9,10 +9,7 @@ class RecipeFilter(filters.FilterSet):
         to_field_name="slug",
         queryset=Tag.objects.all(),
     )
-    is_favorited = filters.BooleanFilter(
-        method='get_favorite',
-        label='Favorited',
-    )
+    is_favorited = filters.CharFilter(method="get_is_favorited")
     is_in_shopping_cart = filters.CharFilter(
         method='get_is_in_shopping_cart'
     )
