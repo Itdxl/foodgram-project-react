@@ -259,3 +259,35 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
                                        recipe__id=recipe_id).exists(): 
             raise ValidationError('Уже в списке.') 
         return data 
+
+
+class ShowFollowSerializer(serializers.ModelSerializer):
+    is_subscribed = serializers.SerializerMethodField()
+    recipes = serializers.SerializerMethodField()
+    recipes_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = (
+            'id', 'email', 'username', 'first_name', 'last_name',
+            'is_subscribed', 'recipes', 'recipes_count'
+        )
+        read_only_fields = fields
+
+    def get_is_subscribed(self, obj):
+        if not self.context['request'].user.is_authenticated:
+            return False
+        return Follow.objects.filter(
+            author=obj, user=self.context['request'].user).exists()
+
+    def get_recipes(self, obj):
+        recipes_limit = int(self.context['request'].GET.get(
+            'recipes_limit', 10))
+        user = get_object_or_404(User, pk=obj.pk)
+        recipes = Recipe.objects.filter(author=user)[:recipes_limit]
+
+        return FollowingRecipesSerializers(recipes, many=True).data
+
+    def get_recipes_count(self, obj):
+        user = get_object_or_404(User, pk=obj.pk)
+        return Recipe.objects.filter(author=user).count()

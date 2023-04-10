@@ -178,7 +178,7 @@ class FollowApiView(APIView):
         obj = Follow(author=author, user=user)
         obj.save()
 
-        serializer = ShowFollowSerializer(
+        serializer = FavoriteSerializer(
             author, context={'request': request})
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
