@@ -206,15 +206,6 @@ class CommonSerializer(serializers.ModelSerializer):
         return data
 
 
-class FavoriteSerializer(CommonSerializer):
-    class Meta(CommonSerializer.Meta):
-        model = Favorite
-
-
-class ShoppingCartSerializer(CommonSerializer):
-    class Meta(CommonSerializer.Meta):
-        model = ShoppingCart
-
 
 class UserRegistrationSerializer(UserCreateSerializer):
     class Meta(UserCreateSerializer.Meta):
