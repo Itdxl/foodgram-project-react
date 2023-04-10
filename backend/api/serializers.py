@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
-from rest_framework.serializers import ValidationError
+
 from users.models import Follow
 from recipes.models import (
     Tag,
@@ -187,6 +187,34 @@ class AddRecipeSerializer(serializers.ModelSerializer):
         return instance
 
 
+class CommonSerializer(serializers.ModelSerializer):
+    recipe = serializers.PrimaryKeyRelatedField(queryset=Recipe.objects.all())
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+
+    class Meta:
+        abstract = True
+        fields = ('user', 'recipe')
+
+    def validate(self, data):
+        user = data['user']
+        recipe_id = data['recipe'].id
+        model = self.Meta.model
+
+        if model.objects.filter(user=user, recipe__id=recipe_id).exists():
+            raise serializers.ValidationError('Уже в списке.')
+
+        return data
+
+
+class FavoriteSerializer(CommonSerializer):
+    class Meta(CommonSerializer.Meta):
+        model = Favorite
+
+
+class ShoppingCartSerializer(CommonSerializer):
+    class Meta(CommonSerializer.Meta):
+        model = ShoppingCart
+
 
 class UserRegistrationSerializer(UserCreateSerializer):
     class Meta(UserCreateSerializer.Meta):
@@ -223,77 +251,3 @@ class ShowFollowSerializer(CustomUserSerializer):
     def get_recipes_count(self, obj):
         user = get_object_or_404(User, pk=obj.pk)
         return Recipe.objects.filter(author=user).count()
-
-
-
-
-# class CommonSerializer(serializers.ModelSerializer):
-#     recipe = serializers.PrimaryKeyRelatedField(queryset=Recipe.objects.all())
-#     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-
-#     class Meta:
-#         abstract = True
-#         fields = ('user', 'recipe')
-
-#     def validate(self, data):
-#         user = data['user']
-#         recipe_id = data['recipe'].id
-#         model = self.Meta.model
-
-#         if model.objects.filter(user=user, recipe__id=recipe_id).exists():
-#             raise serializers.ValidationError('Уже в списке.')
-
-#         return data
-
-
-# class FavoriteSerializer(CommonSerializer):
-#     class Meta(CommonSerializer.Meta):
-#         model = Favorite
-
-
-# class ShoppingCartSerializer(CommonSerializer):
-#     class Meta(CommonSerializer.Meta):
-#         model = ShoppingCart
-
-
-class FavoriteSerializer(serializers.ModelSerializer):
-    recipe = serializers.PrimaryKeyRelatedField(queryset=Recipe.objects.all())
-    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-
-    class Meta:
-        model = Favorite
-        fields = ('user', 'recipe')
-
-    def validate(self, data):
-        user = data['user']
-        recipe_id = data['recipe'].id
-        if Favorite.objects.filter(user=user, recipe__id=recipe_id).exists():
-            raise ValidationError('Рецепт уже добавлен в избранное!')
-        return data
-
-    def to_representation(self, instance):
-        request = self.context.get('request')
-        context = {'request': request}
-        return RecipeSerializer(instance.recipe, context=context).data
-
-
-class ShoppingCartSerializer(serializers.ModelSerializer):
-    recipe = serializers.PrimaryKeyRelatedField(queryset=Recipe.objects.all())
-    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-
-    class Meta:
-        model = ShoppingCart
-        fields = ('user', 'recipe')
-
-    def validate(self, data):
-        user = data['user']
-        recipe_id = data['recipe'].id
-        if ShoppingCart.objects.filter(user=user,
-                                       recipe__id=recipe_id).exists():
-            raise ValidationError('Рецепт уже добавлен в список покупок!')
-        return data
-
-    def to_representation(self, instance):
-        request = self.context.get('request')
-        context = {'request': request}
-        return RecipeSerializer(instance.recipe, context=context).data
