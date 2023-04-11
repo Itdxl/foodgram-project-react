@@ -78,7 +78,7 @@ docker-compose exec -T backend python manage.py collectstatic --no-input
 ```
 
 ```
-в админке добвьте Теги
+В админке добвьте Теги
 ```
 
 
