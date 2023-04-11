@@ -51,7 +51,7 @@ DEBUG=False
 Создайте образ:
 
 ```
-docker build -t itdxl/foodgramback:latest .
+docker build -t itdxl/foodgramback:latest
 ```
 
 В директории infra:
