@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.db import models
 
 from .models import Follow, User
 
@@ -17,12 +16,3 @@ class UserAdmin(admin.ModelAdmin):
 class FollowAdmin(admin.ModelAdmin):
     list_display = ('pk', 'user', 'author')
     list_filter = ('user', 'author')
-
-
-
-class Group(models.Model):
-    name = models.CharField(max_length=100, verbose_name="Группы")
-
-
-class Token(models.Model):
-    token = models.CharField(max_length=100, verbose_name="Токены")
