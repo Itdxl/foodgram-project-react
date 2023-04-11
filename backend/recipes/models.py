@@ -125,8 +125,6 @@ class IngredientInRecipe(models.Model):
 @receiver(pre_delete, sender=IngredientInRecipe)
 def prevent_delete_last_ingredient(sender, instance, **kwargs):
     if instance.recipe.ingredients.count() <= 1:
-        # If the recipe will have 0 ingredients after deletion,
-        # cancel the deletion of the ingredient
         raise models.ProtectedError(
             "Cannot delete the last ingredient in a recipe.",
             obj=instance
