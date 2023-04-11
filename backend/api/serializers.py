@@ -145,8 +145,7 @@ class AddRecipeSerializer(serializers.ModelSerializer):
         for ingredient in data:
             if ingredient['amount'] < 1:
                 raise serializers.ValidationError('Кол-во не меньше 1.')
-            else:
-                ingredients_set.append(ingredient['id'])
+            ingredients_set.append(ingredient['id'])
         return data
 
     def validate_cooking_time(self, data):
@@ -160,7 +159,7 @@ class AddRecipeSerializer(serializers.ModelSerializer):
         ingredients_data = validated_data.pop('ingredients')
         if not ingredients_data:
             raise serializers.ValidationError('минимум один ингредиент')
-        elif not tags_data:
+        if not tags_data:
             raise serializers.ValidationError('минимум один тег')
         recipe = Recipe.objects.create(author=author, **validated_data)
         for ingredient in ingredients_data:
