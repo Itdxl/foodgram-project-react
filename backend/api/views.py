@@ -76,16 +76,16 @@ class RecipeView(viewsets.ModelViewSet):
                                                  pk=None, action_type=None):
         user = request.user
         recipe = get_object_or_404(Recipe, id=pk)
-        if request.method == "POST":
-            if action_type == "favorite":
+        if action_type == "favorite":
                 action_model = Favorite
-            elif action_type == "shopping_cart":
+        elif action_type == "shopping_cart":
                 action_model = ShoppingCart
-            else:
+        else:
                 return Response(
                     {"error": "Неправильный тип действия"},
                     status=status.HTTP_400_BAD_REQUEST
                 )
+        if request.method == "POST":
             if action_model.objects.filter(user=user, recipe=recipe).exists():
                 return Response(
                     {"error": f"Этот рецепт уже в {action_type}"},
@@ -100,25 +100,12 @@ class RecipeView(viewsets.ModelViewSet):
                                             context={"request": request})
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-
         if request.method == "DELETE":
-            if action_type == "favorite":
-                action_model = Favorite
-            elif action_type == "shopping_cart":
-                action_model = ShoppingCart
-            else:
-                return Response(
-                    {"error": "Неправильный тип действия"},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
             action_object = get_object_or_404(action_model, user=user,
                                               recipe=recipe)
             action_object.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-
-        if request.method == 'GET':
-            if action_type == "favorite":
-                return
+        return
 
     @action(
         detail=True,
