@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.core.exceptions import ValidationError
 
 
 class User(AbstractUser):
@@ -37,6 +36,7 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
+
 class Follow(models.Model):
     user = models.ForeignKey(
         User,
@@ -51,14 +51,11 @@ class Follow(models.Model):
         verbose_name='Автор, на которого подписываются'
     )
 
-    def validate_sef_follow(self):
-        if self.user == self.author:
-            raise ValidationError("Нельзя подписаться на самого себя.")
-
     class Meta:
         constraints = [models.UniqueConstraint(
             fields=['user', 'author'],
-            name='unigue_subscriber'
+            name='unigue_subscriber_and_no_self_follow',
+            condition=~models.Q(user=models.F('author'))
         )]
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'

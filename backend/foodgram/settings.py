@@ -179,4 +179,4 @@ CORS_URLS_REGEX = r'^/api/.*$'
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:80',
     "http://127.0.0.1:80",
-] 
+]

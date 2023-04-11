@@ -77,14 +77,14 @@ class RecipeView(viewsets.ModelViewSet):
         user = request.user
         recipe = get_object_or_404(Recipe, id=pk)
         if action_type == "favorite":
-                action_model = Favorite
+            action_model = Favorite
         elif action_type == "shopping_cart":
-                action_model = ShoppingCart
+            action_model = ShoppingCart
         else:
-                return Response(
-                    {"error": "Неправильный тип действия"},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+            return Response(
+                {"error": "Неправильный тип действия"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         if request.method == "POST":
             if action_model.objects.filter(user=user, recipe=recipe).exists():
                 return Response(
