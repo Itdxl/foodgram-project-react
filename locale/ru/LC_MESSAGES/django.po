@@ -1,4 +1,4 @@
-msgid "Group"
-msgstr "Группа"
-msgid "Token"
-msgstr "Токен"
+msgid "Groups"
+msgstr "Группы"
+msgid "Tokens"
+msgstr "Токены"
