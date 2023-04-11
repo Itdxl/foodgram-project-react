@@ -1,6 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator, RegexValidator
 from django.db import models
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 
 User = get_user_model()
 
@@ -99,7 +101,6 @@ class Recipe(models.Model):
 
 class IngredientInRecipe(models.Model):
     amount = models.PositiveIntegerField(
-        verbose_name='Кол-во ингредиента',
         validators=[
 
             MinValueValidator(1, 'Кол-во не меньше 1'),
@@ -119,6 +120,17 @@ class IngredientInRecipe(models.Model):
     class Meta:
         verbose_name = 'Количество ингредиента'
         verbose_name_plural = 'Количество ингредиентов'
+
+
+@receiver(pre_delete, sender=IngredientInRecipe)
+def prevent_delete_last_ingredient(sender, instance, **kwargs):
+    if instance.recipe.ingredients.count() <= 1:
+        # If the recipe will have 0 ingredients after deletion,
+        # cancel the deletion of the ingredient
+        raise models.ProtectedError(
+            "Cannot delete the last ingredient in a recipe.",
+            obj=instance
+        )
 
 
 class RecipeTag(models.Model):
