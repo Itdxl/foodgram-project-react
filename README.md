@@ -56,9 +56,6 @@ docker build -t itdxl/foodgramback:latest
 
 В директории infra:
 
-```
-cd ../infra
-```
 
 ```
 docker-compose up
