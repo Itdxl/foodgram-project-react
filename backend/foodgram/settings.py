@@ -19,6 +19,10 @@ DEBUG = os.getenv('DEBUG', True)
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '158.160.21.94']
 
+LOCALE_PATHS = [
+    os.path.join(BASE_DIR, 'locale'),
+]
+
 # Application definition
 
 INSTALLED_APPS = [
