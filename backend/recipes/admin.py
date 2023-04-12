@@ -20,7 +20,7 @@ class AdminIngredient(admin.ModelAdmin):
 class IngredientInRecipe(admin.TabularInline):
     model = IngredientInRecipe
     extra = 0
-    min_num = 3
+    min_num = 1
 
 
 class RecipeTagsInline(admin.TabularInline):
