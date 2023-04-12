@@ -32,7 +32,8 @@ class IngredientInRecipeFormSet(forms.BaseInlineFormSet):
 class IngredientInRecipe(admin.TabularInline):
     model = IngredientInRecipe
     extra = 0
-    min_num = IngredientInRecipeFormSet
+    formset = IngredientInRecipeFormSet
+    min_num = 1
 
 
 class RecipeTagsInline(admin.TabularInline):
