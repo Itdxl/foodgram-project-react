@@ -36,6 +36,8 @@ class AdminRecipe(admin.ModelAdmin):
     def in_favorite(self, obj):
         return obj.in_favorite.all().count()
 
+    exclude = ('tags',)
+
 
 @admin.register(Favorite)
 class AdminFavorite(admin.ModelAdmin):
